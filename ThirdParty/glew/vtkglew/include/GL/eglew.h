@@ -108,6 +108,10 @@
 
 #include <GL/glew.h>
 
+#if defined(_WIN32)
+# include <stdint.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

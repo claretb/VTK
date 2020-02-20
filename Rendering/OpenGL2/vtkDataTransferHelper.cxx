@@ -13,7 +13,7 @@
 
 =========================================================================*/
 #include "vtkDataTransferHelper.h"
-
+#include "vtk_glew.h"
 #include "vtkDataArray.h"
 #include "vtkImageData.h"
 #include "vtkPixelBufferObject.h"
@@ -284,10 +284,12 @@ bool vtkDataTransferHelper::Upload(int components,
         }
         switch(this->MinTextureDimension)
         {
+#if GL_ES_VERSION_3_0 != 1
           case 1:
             uploaded = this->Texture->Create1D(numComps, pbo,
                                                this->ShaderSupportsTextureInt);
             break;
+#endif
           case 2:
             uploaded = this->Texture->Create2D(length,1,numComps, pbo,
                                                this->ShaderSupportsTextureInt);

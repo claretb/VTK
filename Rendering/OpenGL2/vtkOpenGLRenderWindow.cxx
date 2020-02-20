@@ -893,7 +893,19 @@ int vtkOpenGLRenderWindow::GetColorBufferSizes(int *rgba)
   if ( this->Initialized)
   {
     this->MakeCurrent();
+    
+#if GL_ES_VERSION_3_0 != 1
     GLint attachment = GL_BACK_LEFT;
+#else
+    GLint attachment = GL_BACK;
+    GLint frameBufferBinding = 0;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &frameBufferBinding);
+    if (frameBufferBinding) 
+    {
+      attachment = GL_COLOR_ATTACHMENT0;
+    }
+#endif
+
 #ifdef GL_DRAW_BUFFER
     glGetIntegerv(GL_DRAW_BUFFER, &attachment);
 #endif
@@ -901,6 +913,7 @@ int vtkOpenGLRenderWindow::GetColorBufferSizes(int *rgba)
     // if it says we are using GL_FRONT or GL_BACK
     // then convert those to GL_FRONT_LEFT and
     // GL_BACK_LEFT.
+#if GL_ES_VERSION_3_0 != 1
     if (attachment == GL_FRONT)
     {
       attachment = GL_FRONT_LEFT;
@@ -909,7 +922,7 @@ int vtkOpenGLRenderWindow::GetColorBufferSizes(int *rgba)
     {
       attachment = GL_BACK_LEFT;
     }
-
+#endif
     // make sure we clear any errors before we start
     // otherwise we may get incorrect results
     while (glGetError() != GL_NO_ERROR)
@@ -1024,7 +1037,20 @@ unsigned char* vtkOpenGLRenderWindow::GetPixelData(int x1, int y1,
 
   unsigned char* ucdata = new unsigned char[width * height * 3];
   vtkRecti rect(x_low, y_low, width, height);
+#if GL_ES_VERSION_3_0 == 1
+  int temp_size = width * height * 4;
+  unsigned char* temp = new unsigned char[temp_size];
+  this->ReadPixels(rect, front, GL_RGBA, GL_UNSIGNED_BYTE, temp, right);
+  for (int i=0, j=0; i<temp_size; i++)
+  {
+      ucdata[j++] = temp[i++];
+      ucdata[j++] = temp[i++];
+      ucdata[j++] = temp[i++];
+  }
+  delete[] temp;
+#else
   this->ReadPixels(rect, front, GL_RGB, GL_UNSIGNED_BYTE, ucdata, right);
+#endif
   return ucdata;
 }
 
@@ -1076,6 +1102,10 @@ int vtkOpenGLRenderWindow::GetPixelData(int x1, int y1,
 // does the current read buffer require resolving for reading pixels
 bool  vtkOpenGLRenderWindow::GetCurrentBufferNeedsResolving()
 {
+#if GL_ES_VERSION_3_0 == 1
+  return false;
+#endif
+
   GLint frameBufferBinding = 0;
   glGetIntegerv(GL_FRAMEBUFFER_BINDING, &frameBufferBinding);
 
@@ -1894,6 +1924,10 @@ int vtkOpenGLRenderWindow::SetRGBACharPixelData(int x1, int y1, int x2,
 int vtkOpenGLRenderWindow::GetZbufferData( int x1, int y1, int x2, int y2,
                                            float* z_data )
 {
+#if GL_ES_VERSION_3_0 == 1
+  return VTK_OK;
+#endif
+
   int             y_low;
   int             x_low;
   int             width, height;

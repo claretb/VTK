@@ -116,6 +116,7 @@ unsigned int vtkOpenGLShaderCache::ReplaceShaderValues(
   std::string &FSSource,
   std::string &GSSource)
 {
+#if GL_GEOMETRY_SHADER
   // first handle renaming any Fragment shader inputs
   // if we have a geometry shader. By default fragment shaders
   // assume their inputs come from a Vertex Shader. When we
@@ -125,6 +126,7 @@ unsigned int vtkOpenGLShaderCache::ReplaceShaderValues(
   {
     vtkShaderProgram::Substitute(FSSource,"VSOut","GSOut");
   }
+#endif
 
 #if GL_ES_VERSION_3_0 == 1
   std::string version = "#version 300 es\n";

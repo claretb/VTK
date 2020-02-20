@@ -99,7 +99,7 @@
     << ".");
 
 // on windows strerror doesn't handle socket error codes
-#if defined(_WIN32) && !defined(__CYGWIN__)
+#if !defined(VTK_SOCKET_FAKE_API) && defined(_WIN32) && !defined(__CYGWIN__)
 static
 const char *wsaStrerror(int wsaeid)
 {

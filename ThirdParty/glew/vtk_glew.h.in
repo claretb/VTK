@@ -18,6 +18,9 @@
 /* Use the glew library configured for VTK. */
 #cmakedefine VTK_USE_SYSTEM_GLEW
 
+/* Use the glew library configured for VTK. */
+#cmakedefine VTK_OPENGL_USE_GLES
+
 #define GLEW_NO_GLU
 #define VTK_OPENGL_ES_VERSION 30
 
@@ -32,6 +35,21 @@
 # include <GLES3/gl3.h>
 #elif TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
 # include <OpenGLES/ES3/gl.h>
+#elif __EMSCRIPTEN__ || defined(VTK_OPENGL_USE_GLES)
+// # include <GLES/gl.h>
+# define GL_GLEXT_PROTOTYPES
+# include <GLES3/gl3.h>
+# include <GLES2/gl2ext.h>
+# define glPointSize(...)
+# define glTexEnvi(...)
+# define glPointParameteri(...)
+# define glTexImage2DMultisample(...)
+# define GL_POINT_SPRITE_COORD_ORIGIN 0
+# define GL_LOWER_LEFT 0
+# define GL_COORD_REPLACE 0
+# define GL_POINT_SPRITE 0
+# define GL_LINE 0
+# define GL_LINE_SMOOTH 0
 #elif defined(VTK_USE_SYSTEM_GLEW)
 #cmakedefine VTK_SYSTEM_GLEW_SHARED
 #ifndef VTK_SYSTEM_GLEW_SHARED

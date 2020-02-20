@@ -143,8 +143,9 @@ vtkIdType vtkOpenGLContextBufferId::GetPickedItem(int x, int y)
       // Render texture to current write buffer. Texel x,y is rendered at
       // pixel x,y (instead of pixel 0,0 to work around pixel ownership test).
       GLint savedDrawBuffer;
+#if GL_DRAW_BUFFER
       glGetIntegerv(GL_DRAW_BUFFER,&savedDrawBuffer);
-
+#endif
       vtkOpenGLState::ScopedglEnableDisable dsaver(ostate,GL_DEPTH_TEST);
       vtkOpenGLState::ScopedglEnableDisable ssaver(ostate,GL_STENCIL_TEST);
       vtkOpenGLState::ScopedglEnableDisable bsaver(ostate,GL_BLEND);

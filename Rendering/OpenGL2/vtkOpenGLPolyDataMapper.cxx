@@ -665,7 +665,12 @@ void vtkOpenGLPolyDataMapper::ReplaceShaderColor(
   else if (this->HaveCellScalars && !this->DrawingEdgesOrVertices && !pointPicking)
   {
     colorImpl +=
+#if GL_ES_VERSION_3_0 != 1
       "  vec4 texColor = texelFetchBuffer(textureC, gl_PrimitiveID + PrimitiveIDOffset);\n"
+#else
+      // TODO: fix me please!
+      "  vec4 texColor = texelFetch(textureC, ivec2(PrimitiveIDOffset, 0), 0);\n"
+#endif
       "  vec3 ambientColor = ambientIntensity * texColor.rgb;\n"
       "  vec3 diffuseColor = diffuseIntensity * texColor.rgb;\n"
       "  float opacity = opacityUniform * texColor.a;";
@@ -713,7 +718,11 @@ void vtkOpenGLPolyDataMapper::ReplaceShaderColor(
 
   if (this->HaveCellScalars && !this->DrawingEdgesOrVertices)
   {
+#if GL_ES_VERSION_3_0 != 1
     colorDec += "uniform samplerBuffer textureC;\n";
+#else
+    colorDec += "uniform sampler2D textureC;\n";
+#endif
   }
 
   vtkShaderProgram::Substitute(FSSource,"//VTK::Color::Dec", colorDec);

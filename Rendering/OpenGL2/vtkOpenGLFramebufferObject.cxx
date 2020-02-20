@@ -695,11 +695,13 @@ void vtkOpenGLFramebufferObject::SaveCurrentBindings(unsigned int mode)
 {
   if (mode == GL_FRAMEBUFFER || mode == GL_DRAW_FRAMEBUFFER)
   {
+    this->PreviousDrawFBO = 0;
     glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, (int*)&this->PreviousDrawFBO);
     this->DrawBindingSaved = true;
   }
   if (mode == GL_FRAMEBUFFER || mode == GL_READ_FRAMEBUFFER)
   {
+    this->PreviousReadFBO = 0;
     glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, (int*)&this->PreviousReadFBO);
     this->ReadBindingSaved = true;
   }

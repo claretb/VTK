@@ -43,19 +43,29 @@ find_path(EGL_INCLUDE_DIR
 
 find_library(EGL_LIBRARY
   NAMES
-    EGL
+    libEGL
   PATHS
     ${EGL_ROOT_DIR}/lib
     /usr/local/lib
     /usr/lib)
 
-find_library(EGL_opengl_LIBRARY
-  NAMES
-   OpenGL
-  PATHS
-    ${EGL_ROOT_DIR}/lib
-    /usr/local/lib
-    /usr/lib)
+if(VTK_OPENGL_USE_GLES)
+  find_library(EGL_opengl_LIBRARY
+    NAMES
+     libGLESv2
+    PATHS
+      ${EGL_ROOT_DIR}/lib
+      /usr/local/lib
+      /usr/lib)
+else()
+  find_library(EGL_opengl_LIBRARY
+    NAMES
+     OpenGL
+    PATHS
+      ${EGL_ROOT_DIR}/lib
+      /usr/local/lib
+      /usr/lib)
+endif()
 
 set(EGL_LIBRARIES ${EGL_LIBRARY} ${EGL_opengl_LIBRARY})
 

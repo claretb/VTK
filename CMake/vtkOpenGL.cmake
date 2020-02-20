@@ -131,8 +131,8 @@ endif()
 
 if(VTK_OPENGL_USE_GLES)
   find_path(OPENGL_INCLUDE_DIR GLES3/gl3.h)
-  find_library(OPENGL_gl_LIBRARY NAMES GLESv3)
-  find_library(OPENGL_egl_LIBRARY NAMES EGL)
+  find_library(OPENGL_gl_LIBRARY NAMES libGLESv2)
+  find_library(OPENGL_egl_LIBRARY NAMES libEGL)
 endif()
 
 if(VTK_OPENGL_HAS_EGL)

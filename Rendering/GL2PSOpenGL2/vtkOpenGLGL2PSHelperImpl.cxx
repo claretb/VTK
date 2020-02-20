@@ -729,9 +729,15 @@ void vtkOpenGLGL2PSHelperImpl::GetTransformParameters(
   vpOrigin[1] = static_cast<double>(lowerLeft[1]);
   halfSize[0] = static_cast<double>(usize) * 0.5;
   halfSize[1] = static_cast<double>(vsize) * 0.5;
-
+  
+#if GL_ES_VERSION_3_0 != 1
   double depthRange[2];
   glGetDoublev(GL_DEPTH_RANGE, depthRange);
+#else
+  float depthRange[2];
+  glGetFloatv(GL_DEPTH_RANGE, depthRange);
+#endif
+
   zFact[0] = (depthRange[1] - depthRange[0]) * 0.5;
   zFact[1] = (depthRange[1] + depthRange[0]) * 0.5;
 }

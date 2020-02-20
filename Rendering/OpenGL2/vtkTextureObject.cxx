@@ -1106,6 +1106,8 @@ bool vtkTextureObject::CreateTextureBuffer(unsigned int numValues, int numComps,
 
 #else
 
+// TODO: verify and fix CreateTextureBuffer please!
+
 // Description:
 // Create a texture buffer basically a 1D texture that can be
 // very large for passing data into the fragment shader
@@ -1113,9 +1115,52 @@ bool vtkTextureObject::CreateTextureBuffer(unsigned int numValues, int numComps,
                          int dataType, vtkOpenGLBufferObject *bo)
 {
   assert(this->Context);
-  vtkErrorMacro("TextureBuffers not supported in OPenGL ES");
-  // TODO: implement 1D and Texture buffers using 2D textures
-  return false;
+
+  this->GetDataType(dataType);
+  this->GetInternalFormat(dataType, numComps, false);
+  this->GetFormat(dataType, numComps, false);
+
+  if (!this->InternalFormat || !this->Format || !this->Type)
+  {
+    vtkErrorMacro("Failed to determine texture parameters.");
+    return false;
+  }
+
+  this->Target = GL_TEXTURE_2D;
+  this->Components = numComps;
+  this->Width = numValues;
+  this->Height = 1;
+  this->Depth = 1;
+  this->NumberOfDimensions = 2;
+  this->BufferObject = bo;
+
+
+  this->Context->ActivateTexture(this);
+  this->CreateTexture();
+  this->Bind();
+
+
+  // Source texture data from the PBO.
+  this->BufferObject->Bind();
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+  glTexImage2D(
+        this->Target,
+        0,
+        this->InternalFormat,
+        static_cast<GLsizei>(this->Width),
+        static_cast<GLsizei>(this->Height),
+        0,
+        this->Format,
+        this->Type,
+        BUFFER_OFFSET(0));
+
+  vtkOpenGLCheckErrorMacro("failed at glTexImage2D");
+
+  this->BufferObject->Release();
+  this->Deactivate();
+
+  return true;
 }
 
 #endif // not ES 2.0 or 3.0

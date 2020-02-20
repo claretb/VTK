@@ -20,6 +20,12 @@ target_compile_definitions(vtkglew
   PRIVATE
     GLEW_NO_GLU)
 
+if(VTK_OPENGL_USE_GLES)
+  target_compile_definitions(vtkglew
+    PRIVATE
+      GLEW_USE_GLES)
+endif()
+
 if(VTK_OPENGL_HAS_OSMESA AND UNIX)
   target_compile_definitions(vtkglew
     PRIVATE

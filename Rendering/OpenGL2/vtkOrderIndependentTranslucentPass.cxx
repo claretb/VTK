@@ -245,6 +245,7 @@ void vtkOrderIndependentTranslucentPass::Render(const vtkRenderState *s)
 
     // what depth format should we use?
     this->TranslucentZTexture->SetContext(renWin);
+
     int dbits =renWin->GetDepthBufferSize();
     if (dbits == 32)
     {
@@ -253,9 +254,17 @@ void vtkOrderIndependentTranslucentPass::Render(const vtkRenderState *s)
     }
     else
     {
-      this->TranslucentZTexture->AllocateDepth(
-        this->ViewportWidth, this->ViewportHeight, vtkTextureObject::Fixed24);
+      if (renWin->GetStencilCapable()) 
+      {
+        this->TranslucentZTexture->AllocateDepthStencil(this->ViewportWidth, this->ViewportHeight);
+      } 
+      else 
+      {
+        this->TranslucentZTexture->AllocateDepth(
+          this->ViewportWidth, this->ViewportHeight, vtkTextureObject::Fixed24);
+      }
     }
+
     this->TranslucentZTexture->SetWrapS(vtkTextureObject::ClampToEdge);
     this->TranslucentZTexture->SetWrapT(vtkTextureObject::ClampToEdge);
   }

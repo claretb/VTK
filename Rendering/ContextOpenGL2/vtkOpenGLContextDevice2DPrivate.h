@@ -313,7 +313,9 @@ public:
       this->SavedStencilTest = ostate->GetEnumState(GL_STENCIL_TEST);
       this->SavedBlend = ostate->GetEnumState(GL_BLEND);
       ostate->vtkglGetFloatv(GL_COLOR_CLEAR_VALUE, this->SavedClearColor);
+#if GL_DRAW_BUFFER
       ostate->vtkglGetIntegerv(GL_DRAW_BUFFER, &this->SavedDrawBuffer);
+#endif
     }
   }
 

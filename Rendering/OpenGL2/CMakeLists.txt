@@ -212,7 +212,7 @@ if(VTK_USE_X)
   list(APPEND Module_SRCS
     vtkXRenderWindowInteractor.cxx
     vtkXOpenGLRenderWindow.cxx)
-elseif(WIN32)
+elseif(WIN32 AND NOT VTK_OPENGL_USE_GLES)
   # Add some custom overrides
   if(NOT VTK_DEFAULT_RENDER_WINDOW_HEADLESS)
     vtk_add_override("vtkRenderWindowInteractor" "vtkWin32RenderWindowInteractor")

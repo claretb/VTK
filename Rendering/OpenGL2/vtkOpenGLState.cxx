@@ -48,6 +48,8 @@
 #if defined(VTK_COMPILER_MSVC) && defined(WIN32)
 #define TRACE_MAX_STACK_FRAMES 1024
 #define TRACE_MAX_FUNCTION_NAME_LENGTH 1024
+#define VTK_WINDOWS_FULL
+#include "vtkWindows.h"
 #include "dbghelp.h"
 std::string getProgramStack()
 {
